@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+enum TypeOfMetric {
+    DOT = 0;
+    DERIVATIVE = 1;
+}
+
+message Metric {
+    optional TypeOfMetric TypeOfMetric = 1;
+    optional double Value = 2;
+    google.protobuf.Timestamp Timestamp = 3;
+}
