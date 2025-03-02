@@ -29,7 +29,6 @@ concept Connection = requires(T connection, std::variant<typename GetMetricsRequ
 
 template<typename T, typename GetMetricsRequest, typename PostMetricsRequest, typename ConcreteConnection>
 concept Acceptor = Connection<ConcreteConnection, GetMetricsRequest, PostMetricsRequest> && requires(T acceptor) {
-    // Connection<GetMetricsRequest, PostMetricsRequest>
     { acceptor.Accept() } -> std::convertible_to<ConcreteConnection>;
 };
 
