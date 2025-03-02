@@ -5,8 +5,6 @@
 #include <boost/asio/thread_pool.hpp>
 #include <boost/asio/post.hpp>
 
-#include <proto/metric.pb.h>
-
 int Main(int argc, char** argv) {
     boost::asio::thread_pool tp(1);
     boost::asio::post(

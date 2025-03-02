@@ -12,8 +12,6 @@ set(PQXX_LIBRARIES pqxx_static)
 
 FetchContent_MakeAvailable(libpqxx)
 
-add_subdirectory(proto)
-
 add_library(
     server_lib
     server.h
@@ -22,14 +20,3 @@ add_library(
 
 target_link_libraries(server_lib LINK_PUBLIC ${Boost_LIBRARIES})
 target_link_libraries(server_lib LINK_PUBLIC ${PQXX_LIBRARIES})
-target_link_libraries(server_lib LINK_PUBLIC proto_lib)
-
-target_link_libraries(
-    server_lib PRIVATE
-    proto_lib
-    ${Protobuf_LIBRARIES}
-)
-
-target_include_directories(server_lib PRIVATE
-    ${CMAKE_BINARY_DIR}/lib
-)
