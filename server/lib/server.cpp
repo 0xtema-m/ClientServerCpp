@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include <boost/asio/thread_pool.hpp>
 #include <boost/asio/post.hpp>
 
 int Main(int argc, char** argv) {
