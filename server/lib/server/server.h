@@ -14,6 +14,17 @@ public:
     {
     }
 
+    std::future<void> RegisterProject(const RegisterProjectRequest& request) {
+        std::promise<void> promise;
+        auto future = promise.get_future();
+        boost::asio::post(m_thread_pool, [request, promise = std::move(promise)]() mutable {
+            MonitoringService service;
+            service.RegisterProject(request);
+            promise.set_value();
+        });
+        return future;
+    }
+
     std::future<void> DoPost(const PostRequest& request) {
         std::promise<void> promise;
         auto future = promise.get_future();

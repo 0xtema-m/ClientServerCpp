@@ -62,12 +62,17 @@ struct GetResponse {
     std::vector<MetricValue> values;
 };
 
+struct RegisterProjectRequest {
+    std::string project_id;
+};
+
 class MonitoringService {
 public:
     MonitoringService();
 
     void DoPost(const PostRequest& request);
     std::optional<GetResponse> DoGet(const GetRequest& request);
+    void RegisterProject(const RegisterProjectRequest& request);
 
 private:
     pqxx::connection m_connection;

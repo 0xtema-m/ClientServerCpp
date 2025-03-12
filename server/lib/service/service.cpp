@@ -30,8 +30,29 @@ MonitoringService::MonitoringService()
         "port=5432"
     )
 {
+}
+
+void MonitoringService::RegisterProject(const RegisterProjectRequest& request) {
+    if (!m_connection.is_open()) {
+        std::cerr << "Connection is closed" << std::endl;
+        return;
+    }
+
     pqxx::work tx(m_connection);
-    tx.exec("CREATE EXTENSION IF NOT EXISTS timescaledb;");
+    std::string table_name = tx.quote_name(request.project_id);
+
+    tx.exec(std::format(R"(
+        CREATE TABLE IF NOT EXISTS {} (
+            time   TIMESTAMPTZ         NOT NULL,
+            tags   TEXT                NOT NULL,
+            value  DOUBLE PRECISION    NULL
+        );
+    )", table_name));
+
+    tx.exec(std::format(R"(
+        SELECT create_hypertable('{}', 'time', if_not_exists => TRUE);
+    )", table_name));
+
     tx.commit();
 }
 
@@ -44,18 +65,6 @@ void MonitoringService::DoPost(const PostRequest& request) {
     pqxx::work tx(m_connection);
     for (const auto& [ids, value]: request.metrics) {
         std::string table_name = tx.quote_name(ids.project_id);
-        
-        tx.exec(std::format(R"(
-            CREATE TABLE IF NOT EXISTS {} (
-                time   TIMESTAMPTZ         NOT NULL,
-                tags   TEXT                NOT NULL,
-                value  DOUBLE PRECISION    NULL
-            );
-        )", table_name));
-
-        tx.exec(std::format(R"(
-            SELECT create_hypertable('{}', 'time', if_not_exists => TRUE);
-        )", table_name));
 
         auto tags_str = std::accumulate(
             ids.tags.begin(), ids.tags.end(), std::string(""),
@@ -111,10 +120,10 @@ std::optional<GetResponse> MonitoringService::DoGet(const GetRequest& request) {
     );
 
     auto result = tx.exec(
-        "SELECT "
+        " SELECT "
         "    (EXTRACT(EPOCH FROM time) * 1000)::bigint as time_ms, "
         "    value "
-        "FROM " + table_name + 
+        " FROM " + table_name + 
         " WHERE tags = " + tx.quote(tags_str) +
         " AND time > NOW() - INTERVAL '" + std::to_string(request.interval_seconds) + " seconds'" +
         " ORDER BY time ASC"
