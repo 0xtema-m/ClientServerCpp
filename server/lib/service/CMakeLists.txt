@@ -1,6 +1,6 @@
 include(FetchContent)
 
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS program_options json)
 include_directories(${Boost_INCLUDE_DIR})
 
 FetchContent_Declare(
@@ -13,9 +13,9 @@ set(PQXX_LIBRARIES pqxx_static)
 FetchContent_MakeAvailable(libpqxx)
 
 add_library(
-    service_lib
-    service.h
-    service.cpp
+  service_lib
+  service.h
+  service.cpp
 )
 
 target_link_libraries(service_lib LINK_PUBLIC ${Boost_LIBRARIES})

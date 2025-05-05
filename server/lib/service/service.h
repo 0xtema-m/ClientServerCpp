@@ -2,6 +2,7 @@
 
 #include <pqxx/pqxx>
 #include <boost/functional/hash.hpp>
+
 #include <iostream>
 #include <numeric>
 #include <utility>
@@ -41,7 +42,7 @@ struct MetricIdentifiersHasher {
 
 struct MetricValue {
     double value;
-    uint64_t timestamp;
+    int64_t timestamp;
 };
 
 struct Metric {
@@ -55,7 +56,7 @@ struct PostRequest {
 
 struct GetRequest {
     MetricIdentifiers identifiers;
-    uint64_t interval_seconds;
+    int64_t interval_seconds;
 };
 
 struct GetResponse {

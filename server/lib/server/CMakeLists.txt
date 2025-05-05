@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS program_options system json)
 include_directories(${Boost_INCLUDE_DIR})
 
 add_library(

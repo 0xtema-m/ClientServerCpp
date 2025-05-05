@@ -75,9 +75,9 @@ void MonitoringService::DoPost(const PostRequest& request) {
             }
         );
 
-        std::map<uint64_t, double> aggregated_values;
+        std::map<int64_t, double> aggregated_values;
         for (const auto& metric_value : value) {
-            uint64_t bucket = (metric_value.timestamp / 15000) * 15000;
+            int64_t bucket = (metric_value.timestamp / 15000) * 15000;
             aggregated_values[bucket] += metric_value.value;
         }
 
@@ -138,7 +138,7 @@ std::optional<GetResponse> MonitoringService::DoGet(const GetRequest& request) {
 
     for (const auto& row : result) {
         MetricValue value;
-        value.timestamp = row[0].as<uint64_t>();
+        value.timestamp = row[0].as<int64_t>();
         value.value = row[1].as<double>();
         response.values.push_back(value);
     }
