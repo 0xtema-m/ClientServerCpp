@@ -154,7 +154,7 @@ public:
         if (it == handlers.end()) {
             res.result(http::status::not_found);
             res.set(http::field::content_type, "application/json");
-            res.body() = "{\"message\": \"Not found\"}";
+            res.body() = "{\"message\": \"Not found handler\"}";
         } else {
             it->second(req_, res);
         }

@@ -1,0 +1,7 @@
+-I.
+-I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AGL.framework/Headers
+-I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers
+-I/opt/homebrew/lib/QtCore.framework/Headers
+-I/opt/homebrew/lib/QtGui.framework/Headers
+-I/opt/homebrew/lib/QtWidgets.framework/Headers
+-I/opt/homebrew/share/qt/mkspecs/macx-clang
