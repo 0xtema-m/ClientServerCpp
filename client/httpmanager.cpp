@@ -10,8 +10,7 @@ HttpManager::HttpManager(QObject *parent) : QObject(parent)
 
 void HttpManager::fetchData(const QString &projectId, const QStringList &tags, qint64 interval)
 {
-    // Create the API endpoint URL
-    QUrl url("http://127.0.0.1:9999/get");  // Replace with your actual API endpoint
+    QUrl url("http://127.0.0.1:9999/get");
 
     QJsonObject requestBody;
     requestBody["project_id"] = projectId;
@@ -28,19 +27,15 @@ void HttpManager::fetchData(const QString &projectId, const QStringList &tags, q
         }
     }
     requestBody["tags"] = tagsArray;
-    
-    // Create JSON document from object
+
     QJsonDocument doc(requestBody);
     QByteArray jsonData = doc.toJson();
-    
-    // Create the network request
+
     QNetworkRequest request(url);
-    
-    // Set headers for JSON content
+
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, QByteArray::number(jsonData.size()));
 
-    // Get request
     manager->get(request, jsonData);
 }
 

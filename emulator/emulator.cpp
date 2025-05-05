@@ -43,8 +43,8 @@ struct MetricIdentifiers {
 
 class MetricsEmulator {
 public:
-    MetricsEmulator(const std::string& host, unsigned short port, const std::string& project_id, const std::vector<std::string>& tags) 
-        : host_(host), port_(port), project_id_(project_id), tags_(tags), ioc_(), 
+    MetricsEmulator(const std::string& host, unsigned short port, const std::string& project_id, uint32_t sleep_ms, const std::vector<std::string>& tags) 
+        : host_(host), port_(port), project_id_(project_id), sleep_ms_(sleep_ms), tags_(tags), ioc_(), 
           running_(false), generator_(std::random_device{}()), 
           distribution_(0.0, 100.0) {
     }
@@ -90,11 +90,7 @@ public:
             while (running_) {
                 try {
                     sendMetrics();
-                    
-                    // Sleep for 15 seconds
-                    for (int i = 0; i < 15 && running_; ++i) {
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
-                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms_));
                 } catch (const std::exception& e) {
                     std::cerr << "Error in emulator thread: " << e.what() << std::endl;
                     std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -195,6 +191,7 @@ private:
     std::string host_;
     unsigned short port_;
     std::string project_id_;
+    uint32_t sleep_ms_;
     std::vector<std::string> tags_;
     net::io_context ioc_;
     bool running_;
@@ -207,14 +204,16 @@ int main(int argc, char* argv[]) {
     std::string host = "127.0.0.1";
     unsigned short port = 8080;
     std::string project_id = "emulator_project";
+    uint32_t sleep_ms = 15000;
     std::vector<std::string> tags = {};
     
     // Allow overriding defaults from command line
     if (argc > 1) host = argv[1];
     if (argc > 2) port = static_cast<unsigned short>(std::stoi(argv[2]));
     if (argc > 3) project_id = argv[3];
-    if (argc > 4) {
-        std::string tags_str = argv[4];
+    if (argc > 4) sleep_ms = static_cast<uint32_t>(std::stoi(argv[4]));
+    if (argc > 5) {
+        std::string tags_str = argv[5];
         std::stringstream ss(tags_str);
         std::string tag;
         while (std::getline(ss, tag, ',')) {
@@ -225,7 +224,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Starting metrics emulator for project: " << project_id << std::endl;
     std::cout << "Connecting to server at " << host << ":" << port << std::endl;
     
-    MetricsEmulator emulator(host, port, project_id, tags);
+    MetricsEmulator emulator(host, port, project_id, sleep_ms, tags);
     
     try {
         emulator.start();

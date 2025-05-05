@@ -133,6 +133,7 @@ std::optional<GetResponse> MonitoringService::DoGet(const GetRequest& request) {
         return std::nullopt;
     }
 
+    std::unordered_map<int64_t, double> aggregated_values;
     GetResponse response;
     response.values.reserve(result.size());
 
@@ -140,7 +141,11 @@ std::optional<GetResponse> MonitoringService::DoGet(const GetRequest& request) {
         MetricValue value;
         value.timestamp = row[0].as<int64_t>();
         value.value = row[1].as<double>();
-        response.values.push_back(value);
+        aggregated_values[(value.timestamp / 15000) * 15000] += value.value;
+    }
+
+    for (const auto& [timestamp, value] : aggregated_values) {
+        response.values.push_back(MetricValue{value, timestamp});
     }
 
     tx.commit();

@@ -18,9 +18,6 @@
 #include "httpmanager.h"
 #include "datapoint.h"
 
-// Use proper namespace for Qt Charts
-// using namespace QtCharts;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
